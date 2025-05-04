@@ -1,15 +1,14 @@
 import requests
 base_url = "http://chrisbrooks.pythonanywhere.com/"
-r = requests.get(base_url + 'api/programmers')
-programmers = r.json()
-all_programmers = programmers['programmers']
 
 def get_programmer_count():
     """
     Return the number of programmers return from the plural programmers API
     :return: An integer indicating the number of programmers in the plural list.
     """
-    
+    r = requests.get(base_url + 'api/programmers')
+    programmers = r.json()
+    all_programmers = programmers['programmers']
     return len(all_programmers)
 
 
@@ -19,10 +18,13 @@ def get_programmer_by_id(pid):
     :param pid: Unique identifier for the programmer to lookup
     :return: A dictionary containing the matched programmer. Return an empty dictionary if not found
     """
-    for programmer in all_programmers:
-        if programmer['id'] == pid:
-            return programmer
-    return {}
+    try:
+        int_pid = int(pid)
+        r = requests.get(base_url + 'api/programmers/' + str(int_pid))
+        programmers_by_id = r.json()
+        return programmers_by_id
+    except:
+        return {}
 
 
 def get_full_name_from_first(first_name):
@@ -31,9 +33,12 @@ def get_full_name_from_first(first_name):
     :param first_name:
     :return: A string containing the first and last name of the first programmer in the list of matches.
     """
-    case_sensitive_first_name = first_name.lower().capitalize()
-
-    for programmer in all_programmers:
-        if programmer['first'] == case_sensitive_first_name:
-            return f"{programmer['first']} {programmer['last']}"
-    return None
+    try:
+        r = requests.get(base_url + 'api/programmers/by_first_name/' + first_name)
+        programmers_by_first_name = r.json()
+        print(programmers_by_first_name)
+        programmer = programmers_by_first_name['programmers'][0]
+        full_name = f"{programmer['first']} {programmer['last']}"
+        return full_name
+    except:
+        return None
