@@ -31,4 +31,9 @@ def get_full_name_from_first(first_name):
     :param first_name:
     :return: A string containing the first and last name of the first programmer in the list of matches.
     """
-    return ""
+    case_sensitive_first_name = first_name.lower().capitalize()
+
+    for programmer in all_programmers:
+        if programmer['first'] == case_sensitive_first_name:
+            return f"{programmer['first']} {programmer['last']}"
+    return None
